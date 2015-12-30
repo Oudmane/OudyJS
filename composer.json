@@ -12,5 +12,8 @@
             "name": "Ayoub Oudmane",
             "email": "ayoub@oudmane.me"
         }
-    ]
+    ],
+    "require": {
+        "oudmane/oudyapi": "0.1.x"
+    }
 }
