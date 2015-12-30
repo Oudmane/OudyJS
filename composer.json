@@ -1,0 +1,16 @@
+{
+    "name": "oudmane/oudyjs",
+    "title": "OudyJS",
+    "type": "library",
+    "version": "0.1.0",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/Oudmane/OudyJS"
+    },
+    "authors": [
+        {
+            "name": "Ayoub Oudmane",
+            "email": "ayoub@oudmane.me"
+        }
+    ]
+}
