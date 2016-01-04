@@ -5,6 +5,9 @@ OudyJS = {
         request = state;
         request.state = $.extend({}, state);
         request.render = 'oudyjs';
+        request.headers = {
+            'X-Requested-With': 'OudyJS'
+        };
         request.beforeSend = function(event) {
             OudyJS.events.beforeSend(event);
         };
