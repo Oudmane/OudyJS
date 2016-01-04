@@ -1,13 +1,9 @@
-OudyJS = {
+OudyJS = jQuery.extend(true, {
     request: function(state) {
         if(!state)
             return;
         request = state;
         request.state = $.extend({}, state);
-        request.render = 'oudyjs';
-        request.headers = {
-            'X-Requested-With': 'OudyJS'
-        };
         request.beforeSend = function(event) {
             OudyJS.events.beforeSend(event);
         };
@@ -24,7 +20,7 @@ OudyJS = {
         request.complete = function(event) {
             OudyJS.events.complete(event);
         };
-        OudyAPI.send(request);
+        OudyJS.send(request);
     },
     render: function(page) {
         document.title = page.title;
@@ -71,7 +67,7 @@ OudyJS = {
         complete: function(event){},
         render: function(page){}
     }
-};
+}, OudyAPI);
 
 jQuery.fn.URI = function() {
     switch(this.prop('tagName')) {
