@@ -11,5 +11,8 @@
     "repository": {
         "type": "git",
         "url": "git://github.com/Oudmane/OudyJS"
+    },
+    "require": {
+        "oudmane/oudyapi": "*"
     }
 }
