@@ -1,43 +1,10 @@
-OudyJS = jQuery.extend(true, {
-    request: function(state) {
-        if(!state)
-            return;
-        request = state;
-        request.state = $.extend({}, state);
-        request.beforeSend = function(event) {
-            OudyJS.events.beforeSend(event);
-        };
-        request.success = function(page) {
-            if(!page.url)
-                page.url = this.state.uri;
-            if(this.state.push)
-                history.pushState(this.state, page.title, page.url);
-            else
-                history.replaceState(this.state, page.title, page.url);
-            OudyJS.render(page);
-            OudyJS.events.render(page);
-        };
-        request.complete = function(event) {
-            OudyJS.events.complete(event);
-        };
-        OudyJS.send(request);
-    },
-    render: function(page) {
-        document.title = page.title;
-        $.each(page.html, function(position) {
-            $('[data-render="'+position+'"]').html(page.html[position]);
-        });
-        $.each(page.classes, function(position) {
-            $('[data-render="'+position+'"]').attr('class', page.classes[position].join(' '));
-        });
-        $('body').attr('component', page.component);
-        if(page.task)
-            $('body').attr('task', page.task);
-    },
+var OudyJS = {
+    state: null,
     init: function(element) {
         $(element).on('click', '[href]:not([noj],[oudyview]):internal', function() {
             OudyJS.request({
                 uri: $(this).URI(),
+                method: 'GET',
                 push: true
             });
             return false;
@@ -46,7 +13,7 @@ OudyJS = jQuery.extend(true, {
             OudyJS.request({
                 uri: $(this).URI(),
                 method: $(this).attr('method'),
-                data: $(this).serialize(),
+                data: $(this).serializeObject(),
                 push: false
             });
             return false;
@@ -56,27 +23,76 @@ OudyJS = jQuery.extend(true, {
             OudyJS.request(event.state);
         };
         history.replaceState({uri:location.pathname}, '', location.pathname);
+        OudyAPI.callbacks['oudyjs'] = this.render;
     },
     refresh: function() {
         state = history.state;
         state.push = false;
         OudyJS.request(state);
     },
+    request: function(request) {
+        this.state = $.extend({}, request);
+        request.beforeSend = function(request) {
+            if(request) {
+                request.withCredentials = true;
+                request.setRequestHeader('Client', 'c');
+                request.setRequestHeader('Interface', 'oudyjs');
+            }
+            OudyJS.events.beforeSend(request);
+        };
+        request.id = 'oudyjs';
+        request.render = 'oudyjs';
+        request.success = this.render;
+        request.cache = false;
+        OudyAPI.send(request);
+    },
+    render: function(page) {
+        document.title = page.title;
+        $.each(page.html, function(position) {
+            $('[render="'+position+'"]').html(page.html[position]);
+        });
+        $.each(page.template.classes, function(position) {
+            $('[render="'+position+'"]').attr('class', page.template.classes[position].join(' '));
+        });
+        OudyJS.state.uri = page.uri ? page.uri : page.url.path;
+        if(OudyJS.state.push)
+            history.pushState(OudyJS.state, page.title, OudyJS.state.uri);
+        else
+            history.replaceState(OudyJS.state, page.title, OudyJS.state.uri);
+        OudyJS.events.render(page);
+    },
     events: {
-        beforeSend: function(event){},
-        complete: function(event){},
-        render: function(page){}
+        open: function(event) {
+            
+        },
+        close: function(event) {
+            
+        },
+        message: function(event) {
+            
+        },
+        error: function(event) {
+            
+        },
+        beforeSend: function(request) {
+            
+        },
+        render: function(page) {
+            
+        }
     }
-}, OudyAPI);
-
+};
 jQuery.fn.URI = function() {
     switch(this.prop('tagName')) {
-    case 'A':
-        return this[0].href.replace(location.origin, '');
-        break;
-    case 'FORM':
-        return this[0].action.replace(location.origin, '');
-        break;
+        case 'A':
+            return this[0].href.replace(location.origin, '');
+            break;
+        case 'FORM':
+            return this[0].action.replace(location.origin, '');
+            break;
+        default:
+            return $(this).attr('href');
+            break;
     }
 };
 jQuery.expr[':'].external = function (a) {
@@ -84,7 +100,6 @@ jQuery.expr[':'].external = function (a) {
     var href = $(a).URI();
     return href !== undefined && href.search(PATTERN_FOR_EXTERNAL_URLS) !== -1;
 };
-
 jQuery.expr[':'].internal = function (a) {
     return $(a).URI() !== undefined && !$.expr[':'].external(a);
 };
