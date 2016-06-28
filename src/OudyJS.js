@@ -1,7 +1,7 @@
 var OudyJS = {
     state: null,
     init: function(element) {
-        $(element).on('click', '[href]:not([noj],[oudyview]):internal', function() {
+        $(element).on('click', '[href]:not([noj],[oudyview],[href*="#"]):internal', function() {
             OudyJS.request({
                 uri: $(this).URI(),
                 method: 'GET',
@@ -33,17 +33,9 @@ var OudyJS = {
     request: function(request) {
         this.state = $.extend({}, request);
         request.beforeSend = function(request) {
-            if(request) {
-                request.withCredentials = true;
-                request.setRequestHeader('Client', 'c');
-                request.setRequestHeader('Interface', 'oudyjs');
-            }
             OudyJS.events.beforeSend(request);
         };
-        request.id = 'oudyjs';
-        request.render = 'oudyjs';
-        request.success = this.render;
-        request.cache = false;
+        request.interface = 'oudyjs';
         OudyAPI.send(request);
     },
     render: function(page) {
@@ -81,25 +73,4 @@ var OudyJS = {
             
         }
     }
-};
-jQuery.fn.URI = function() {
-    switch(this.prop('tagName')) {
-        case 'A':
-            return this[0].href.replace(location.origin, '');
-            break;
-        case 'FORM':
-            return this[0].action.replace(location.origin, '');
-            break;
-        default:
-            return $(this).attr('href');
-            break;
-    }
-};
-jQuery.expr[':'].external = function (a) {
-    var PATTERN_FOR_EXTERNAL_URLS = /^(\w+:)?\/\//;
-    var href = $(a).URI();
-    return href !== undefined && href.search(PATTERN_FOR_EXTERNAL_URLS) !== -1;
-};
-jQuery.expr[':'].internal = function (a) {
-    return $(a).URI() !== undefined && !$.expr[':'].external(a);
 };
