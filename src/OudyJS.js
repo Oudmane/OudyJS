@@ -39,6 +39,7 @@ var OudyJS = {
         OudyAPI.send(request);
     },
     render: function(page) {
+        OudyJS.events.beforeRender(page);
         document.title = page.title;
         $.each(page.html, function(position) {
             $('[render="'+position+'"]').html(page.html[position]);
@@ -68,6 +69,9 @@ var OudyJS = {
         },
         beforeSend: function(request) {
             
+        },
+        beforeRender: function(page) {
+
         },
         render: function(page) {
             
