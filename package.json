@@ -1,0 +1,27 @@
+{
+  "name": "oudyjs",
+  "version": "1.0.0",
+  "description": "a JavaScript library to make navigation between page without loading every page, using Ajax or WebSocket",
+  "main": "OudyJS.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Oudmane/OudyJS.git"
+  },
+  "keywords": [
+    "oudy",
+    "js",
+    "oudyjs",
+    "oudmane"
+  ],
+  "author": "Ayoub Oudmane <ayoub@oudmane.me>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Oudmane/OudyJS/issues"
+  },
+  "homepage": "https://github.com/Oudmane/OudyJS#readme",
+  "dependencies": {
+    "form-serializer": "^2.5.0",
+    "jquery": "^3.1.0",
+    "oudyapi": "^1.0.0"
+  }
+}
