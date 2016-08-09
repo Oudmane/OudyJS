@@ -28,7 +28,7 @@ module.exports = {
             event.state.push = false;
             OudyJS.request(event.state);
         };
-        history.replaceState({uri:location.pathname}, '', location.pathname);
+        history.replaceState({uri:location.pathname+location.search}, '', location.pathname+location.search);
         OudyAPI.callbacks['oudyjs'] = this.render;
     },
     refresh: function() {
