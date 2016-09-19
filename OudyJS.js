@@ -1,7 +1,8 @@
 var OudyAPI = require('oudyapi'),
     jQuery = require('jquery'),
     formSerializer = require('form-serializer'),
-    OudyJS;
+    OudyJS,
+    events = jQuery({});
 
 module.exports = {
     state: null,
@@ -10,7 +11,6 @@ module.exports = {
         jQuery(element).on('click', '[href]:not([noj],[oudyview],[href*="#"]):internal', function() {
             OudyJS.request({
                 uri: jQuery(this).URI(),
-                method: 'GET',
                 push: true
             });
             return false;
@@ -29,7 +29,16 @@ module.exports = {
             OudyJS.request(event.state);
         };
         history.replaceState({uri:location.pathname+location.search}, '', location.pathname+location.search);
-        OudyAPI.callbacks['oudyjs'] = this.render;
+        OudyAPI.on('before:oudyjs', function(event, request) {
+            OudyJS.trigger('before', request);
+        });
+        OudyAPI.on('success:oudyjs', function(event, response) {
+            OudyJS.trigger('success', response);
+            OudyJS.render(response.response);
+        });
+        OudyAPI.on('complete:oudyjs', function(event, response) {
+            OudyJS.trigger('complete', response);
+        });
     },
     refresh: function() {
         state = history.state;
@@ -38,14 +47,10 @@ module.exports = {
     },
     request: function(request) {
         this.state = jQuery.extend({}, request);
-        request.beforeSend = function(request) {
-            OudyJS.events.beforeSend(request);
-        };
         request.interface = 'oudyjs';
         OudyAPI.send(request);
     },
     render: function(page) {
-        OudyJS.events.beforeRender(page);
         document.title = page.title;
         jQuery.each(page.html, function(position) {
             jQuery('[render="'+position+'"]').html(page.html[position]);
@@ -58,15 +63,9 @@ module.exports = {
             history.pushState(OudyJS.state, page.title, OudyJS.state.uri);
         else
             history.replaceState(OudyJS.state, page.title, OudyJS.state.uri);
-        OudyJS.events.render(page);
+        OudyJS.trigger('render', page);
     },
-    events: {
-        open: function(event) {},
-        close: function(event) {},
-        message: function(event) {},
-        error: function(event) {},
-        beforeSend: function(request) {},
-        beforeRender: function(page) {},
-        render: function(page) {}
-    }
+    on: events.on.bind(events),
+    one: events.one.bind(events),
+    trigger: events.trigger.bind(events)
 };
