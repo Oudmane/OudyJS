@@ -1,6 +1,6 @@
 {
   "name": "oudyjs",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "a JavaScript library to make navigation between page without loading every page, using Ajax or WebSocket",
   "main": "OudyJS.js",
   "repository": {
